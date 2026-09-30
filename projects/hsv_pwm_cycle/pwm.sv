@@ -21,10 +21,14 @@ module pwm #(
     input logic clk,
 
     // threshold (# CLK cycles) for configuring duty cycle
-    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_value,
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_red,
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_green,
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_blue,
 
     // PWM signal directly driving LED
-    output logic pwm_out
+    output logic pwm_out_red,
+    output logic pwm_out_green,
+    output logic pwm_out_blue
 );
 
     logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_count;
@@ -40,6 +44,8 @@ module pwm #(
     end
 
     // Duty cycle threshold
-    assign pwm_out = (pwm_count > pwm_value) ? 1'b1 : 1'b0;
+    assign pwm_out_red   = (pwm_count > pwm_duty_red)   ? 1'b0 : 1'b1;
+    assign pwm_out_green = (pwm_count > pwm_duty_green) ? 1'b0 : 1'b1;
+    assign pwm_out_blue  = (pwm_count > pwm_duty_blue)  ? 1'b0 : 1'b1;
 
 endmodule

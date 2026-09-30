@@ -1,6 +1,6 @@
 // RGB cycle
 
-module mp1(
+module hsv_cycle(
     input logic     clk,
     output logic    RGB_R,
     output logic    RGB_G,
