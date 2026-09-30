@@ -1,4 +1,4 @@
-`timescale 10ns / 100ps
+`timescale 10ns / 100ps // resolution needed to approximate 12 MHz clock (83.333... ns)
 `include "top.sv"
 
 module fade_tb;
@@ -22,12 +22,12 @@ module fade_tb;
     initial begin
         $dumpfile("fade.vcd");
         $dumpvars(0, fade_tb);
-        #100000000
+        #100000000 // 10,000,000 * 10ns = 1s
         $finish;
     end
 
     always begin
-        #4.16
+        #4.16 // 41.6 ns toggle delay -> simulation CLK period: 83.2 ns
         clk = ~clk;
     end
 
