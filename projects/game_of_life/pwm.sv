@@ -1,0 +1,51 @@
+/*
+ * Generate PWM signal
+ *
+ * Inputs:
+ * - CLK
+ * - Duty cycle
+ *
+ * Outputs:
+ * - PWM signal
+ */
+
+module pwm #(
+    /*
+     * PWM_INTERVAL = # CLK cycles for 1 PWM cycle
+     *
+     * CLK frequency is 12MHz
+     * 1 PWM cycle takes 1,200 clock cycles, so PWM frequency is 10kHz
+     */
+    parameter PWM_INTERVAL = 1200
+) (
+    input logic clk,
+
+    // threshold (# CLK cycles) for configuring duty cycle
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_red,
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_green,
+    input logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_duty_blue,
+
+    // PWM signal directly driving LED
+    output logic [7:0] pwm_out_red,
+    output logic [7:0] pwm_out_green,
+    output logic [7:0] pwm_out_blue
+);
+
+    logic [$clog2(PWM_INTERVAL)-1 : 0] pwm_count;
+
+    // PWM timer
+    always_ff @(posedge clk) begin
+        if (pwm_count == PWM_INTERVAL - 1) begin
+            pwm_count <= 0;
+        end
+        else begin
+            pwm_count <= pwm_count + 1;
+        end
+    end
+
+    // Duty cycle threshold
+    assign pwm_out_red   = (pwm_count > pwm_duty_red)   ? 8'h00 : 8'h0F;
+    assign pwm_out_green = (pwm_count > pwm_duty_green) ? 8'h00 : 8'h0F;
+    assign pwm_out_blue  = (pwm_count > pwm_duty_blue)  ? 8'h00 : 8'h0F;
+
+endmodule
